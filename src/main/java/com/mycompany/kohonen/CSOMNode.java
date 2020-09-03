@@ -13,7 +13,8 @@ import java.awt.Point;
  */
 public class CSOMNode {
     //веса
-    private Double[] weights;
+    private final Double[] weights;
+    
     //позиция
     private final Point position;
     
@@ -23,6 +24,7 @@ public class CSOMNode {
         for(int i=0; i <vectorLength; i++){
             weights[i] = Math.random();
         }
+        
         //node pos
         this.position = position;
     }
@@ -42,18 +44,35 @@ public class CSOMNode {
     }
     
     /**
-     * формулы на: 
+     * формулы  
      * http://ai-junkie.com/ann/som/som4.html
      * W(t+1) = w(t) + Θ(t) * L(t) * (V(t) - W(t))
-     * 
-     * Θ - amount of influence a node's distance from the BMU has on its learning
-     * L - learning rate
-     * V - input vector
+     *       
+     *                      Θ - amount of influence a node's distance from the BMU has on its learning
+     * @param dist          d - distance to BMU
+     * @param curRadius     R - current radius
+     * @param learningRate  L - learning rate
+     * @param inputVector   V - input vector
      */
-    public void adjustWeight(double theta, double learningRate, Double[] inputVector){
+    public void adjustWeight(double dist, double curRadius, double learningRate, Double[] inputVector){
+        //calc Θ
+        double theta = calcTheta(dist, curRadius);
+        
+        //пересчет весов
         for(int i=0; i<weights.length; i++){
             double newWeight = weights[i] * theta * learningRate * (inputVector[i] - weights[i]);
             weights[i] = newWeight;
         }
+    }
+    
+    /**
+     * Θ = exp[ - dist^2/(2curRadius^2) ]
+     * @param dist
+     * @param curRadius
+     * @return 
+     */
+    private double calcTheta(double dist, double curRadius){
+        double theta = Math.exp(-Math.pow(dist, 2)/(2*Math.pow(curRadius, 2)));
+        return theta;
     }
 }
