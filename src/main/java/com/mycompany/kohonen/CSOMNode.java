@@ -60,7 +60,7 @@ public class CSOMNode {
         
         //пересчет весов
         for(int i=0; i<weights.length; i++){
-            double newWeight = weights[i] * theta * learningRate * (inputVector[i] - weights[i]);
+            double newWeight = weights[i] + theta * learningRate * (inputVector[i] - weights[i]);
             weights[i] = newWeight;
         }
     }
@@ -74,5 +74,9 @@ public class CSOMNode {
     private double calcTheta(double dist, double curRadius){
         double theta = Math.exp(-Math.pow(dist, 2)/(2*Math.pow(curRadius, 2)));
         return theta;
+    }
+    
+    public Double[] getWeights(){
+        return weights;
     }
 }

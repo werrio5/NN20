@@ -5,9 +5,14 @@
  */
 package com.mycompany.kohonen;
 
+import java.awt.Color;
+import java.awt.Image;
 import java.awt.Point;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  *
@@ -16,12 +21,15 @@ import java.util.List;
 public class SOMMap {
 
     private final List<CSOMNode> nodes;
+    private final Set<Double[]> trainingSet;
 
     //начальные параметры    
     private final double startLearningRate;
     private final double initRadius;
     private final double timeConstant;
     private final int iterationLimit;
+    private final int width;
+    private final int height;
 
     //итерационные параметры
     private int iteration;
@@ -29,7 +37,11 @@ public class SOMMap {
     private double curRadius;
 
     public SOMMap(int width, int height, int vectorLength, double startLearningRate, int iterationLimit) {
-        //начальные параметры        
+        //начальные параметры       
+        //ширина и высота
+        this.width = width;
+        this.height = height;
+        
         //начальная скорость обучения
         this.startLearningRate = startLearningRate;
                 
@@ -54,6 +66,9 @@ public class SOMMap {
                 nodes.add(node);
             }
         }
+        
+        //training set
+        trainingSet = new HashSet<>();
     }
 
     /**
@@ -65,7 +80,7 @@ public class SOMMap {
         CSOMNode BMU = nodes.get(0);
         for (CSOMNode node : nodes) {
             double distance = node.getDistance(inputVector);
-            if (distance > BMU.getDistance(inputVector)) {
+            if (distance < BMU.getDistance(inputVector)) {
                 BMU = node;
             }
         }
@@ -77,13 +92,15 @@ public class SOMMap {
      */
     private void calcBMURadius(){
         curRadius = initRadius * Math.exp(-(double)iteration/timeConstant);
+        System.out.println("rad = "+curRadius);
     }
         
     /**
      * вычислить текущий коэффициент скорости обучения
      */
     private void calcLearningRate(){
-        learningRate = startLearningRate * Math.exp(-iteration/timeConstant);
+        learningRate = startLearningRate * Math.exp(-(double)iteration/iterationLimit);
+        System.out.println("LR = "+learningRate);
     }
     
     /**
@@ -113,7 +130,7 @@ public class SOMMap {
         calcBMURadius();
     }
     
-    public void iterate(Double[] inputVector) {
+    private void iterate(Double[] inputVector) {
         //параметры для итерации
         calcIterationParameters();
                 
@@ -128,5 +145,56 @@ public class SOMMap {
 
         //номер следующей итерации
         iteration++;
+    }
+    
+    public void addTrainVector(Integer[] vector){
+        Double[] dVector = new Double[vector.length];
+        for(int i = 0; i < vector.length; i++){
+            dVector[i] = vector[i].doubleValue() / 255d;
+        }
+        trainingSet.add(dVector);
+    }
+    
+    private Double[] getRandomTrainingVector(){
+        //random index
+        int index = (int) Math.round(Math.random() * (trainingSet.size() - 1));
+        
+        //random vector
+        Double[] randomVector = (Double[]) trainingSet.toArray()[index];
+        return randomVector;
+    }
+    
+    public void train(){
+        for(int i=0; i<iterationLimit; i++){
+            Double[] inputVector = getRandomTrainingVector();
+            iterate(inputVector);
+        }
+    }
+    
+    public List<CSOMNode> getNodes(){
+        return nodes;
+    }
+    
+    public Image weightsToImage(int scale){        
+        //image
+        BufferedImage im = new BufferedImage(width*scale, height*scale, BufferedImage.TYPE_INT_RGB);
+        for(CSOMNode node:nodes){
+            //pos
+            Point pos = node.getPosition();
+            
+            //weights
+            Double[] weights = node.getWeights();
+            
+            //weights to color       
+            Color color = new Color(weights[0].floatValue(), weights[1].floatValue(), weights[2].floatValue());
+            
+            //draw pixels
+            for(int x = 0; x < scale; x++){
+                for(int y = 0; y < scale; y++){                
+                    im.setRGB(pos.x * scale + x, pos.y * scale + y, color.getRGB());
+                }
+            }
+        }
+        return im;
     }
 }
