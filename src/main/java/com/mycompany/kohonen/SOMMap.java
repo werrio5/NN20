@@ -6,6 +6,8 @@
 package com.mycompany.kohonen;
 
 import java.awt.Color;
+import java.awt.Frame;
+import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
@@ -13,6 +15,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import javax.swing.JProgressBar;
 
 /**
  *
@@ -35,6 +38,12 @@ public class SOMMap {
     private int iteration;
     private double learningRate;
     private double curRadius;
+    
+    //прочее
+    //drawFrame
+    Frame drawFrame;
+    //drawScale
+    int drawScale;
 
     public SOMMap(int width, int height, int vectorLength, double startLearningRate, int iterationLimit) {
         //начальные параметры       
@@ -92,7 +101,6 @@ public class SOMMap {
      */
     private void calcBMURadius(){
         curRadius = initRadius * Math.exp(-(double)iteration/timeConstant);
-        System.out.println("rad = "+curRadius);
     }
         
     /**
@@ -100,7 +108,6 @@ public class SOMMap {
      */
     private void calcLearningRate(){
         learningRate = startLearningRate * Math.exp(-(double)iteration/iterationLimit);
-        System.out.println("LR = "+learningRate);
     }
     
     /**
@@ -164,11 +171,28 @@ public class SOMMap {
         return randomVector;
     }
     
+    /**
+     * обучение
+     */
     public void train(){
+
         for(int i=0; i<iterationLimit; i++){
+            //случайный вектор из обучающего набора
             Double[] inputVector = getRandomTrainingVector();
+
+            //отрисовка некоторых изображений            
+            if(iteration < 100 & iteration % 10 == 0 |      //до 100 шаг 10
+               iteration < 1000 & iteration % 100 == 0 |    //до 1000 шаг 100
+               iteration % 500 == 0){                       //далее шаг 500 
+            
+                drawMap();
+            }
+            //следующая итерация
             iterate(inputVector);
         }
+        
+        //финальное изображение
+        drawMap();
     }
     
     public List<CSOMNode> getNodes(){
@@ -196,5 +220,22 @@ public class SOMMap {
             }
         }
         return im;
+    }
+
+    public void setDrawFrame(Frame drawFrame){
+        this.drawFrame = drawFrame;
+    }
+    
+    public void setDrawScale(int drawScale){
+        this.drawScale = drawScale;
+    }
+    
+    /**
+     * отрисовка узлов
+     */
+    public void drawMap(){
+        Image im = weightsToImage(drawScale);
+        Graphics g = drawFrame.getGraphics();
+        g.drawImage(im, 0, 0, drawFrame);
     }
 }

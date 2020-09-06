@@ -5,8 +5,8 @@
  */
 package com.mycompany.kohonen;
 
-import java.awt.Graphics;
-import java.awt.Image;
+import java.awt.Color;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -14,13 +14,10 @@ import java.awt.Image;
  */
 public class DrawFrame extends javax.swing.JFrame {
     
-    Image map;
-    
     /**
      * Creates new form DrawFrame
      */
-    public DrawFrame(Image im) {
-        map = im;
+    public DrawFrame() {
         initComponents();
     }
 
@@ -33,44 +30,322 @@ public class DrawFrame extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        settingsPanel = new javax.swing.JPanel();
+        jLabel1 = new javax.swing.JLabel();
+        mapWidthTextField = new javax.swing.JTextField();
+        mapHeightTextField = new javax.swing.JTextField();
+        jLabel2 = new javax.swing.JLabel();
+        LRTextField = new javax.swing.JTextField();
+        jLabel3 = new javax.swing.JLabel();
+        iterationsTextField = new javax.swing.JTextField();
+        jLabel4 = new javax.swing.JLabel();
+        scaleTextField = new javax.swing.JTextField();
+        trainButton = new javax.swing.JButton();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jList1 = new javax.swing.JList<>();
+
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mousePressed(java.awt.event.MouseEvent evt) {
-                formMousePressed(evt);
+
+        settingsPanel.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+
+        jLabel1.setText("узлов W x H");
+
+        mapWidthTextField.setText("50");
+        mapWidthTextField.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                inputChanged(evt);
+            }
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                inputChanged(evt);
             }
         });
-        addComponentListener(new java.awt.event.ComponentAdapter() {
-            public void componentShown(java.awt.event.ComponentEvent evt) {
-                formComponentShown(evt);
+
+        mapHeightTextField.setText("50");
+        mapHeightTextField.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                inputChanged(evt);
+            }
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                inputChanged(evt);
             }
         });
+
+        jLabel2.setText("Learning rate");
+
+        LRTextField.setText("0.1");
+        LRTextField.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                inputChanged(evt);
+            }
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                inputChanged(evt);
+            }
+        });
+
+        jLabel3.setText("Iterations");
+
+        iterationsTextField.setText("1000");
+        iterationsTextField.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                inputChanged(evt);
+            }
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                inputChanged(evt);
+            }
+        });
+
+        jLabel4.setText("Draw scale");
+
+        scaleTextField.setText("5");
+        scaleTextField.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                inputChanged(evt);
+            }
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                inputChanged(evt);
+            }
+        });
+
+        trainButton.setText("Train");
+        trainButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                trainButtonActionPerformed(evt);
+            }
+        });
+
+        jList1.setModel(new javax.swing.AbstractListModel<String>() {
+            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
+            public int getSize() { return strings.length; }
+            public String getElementAt(int i) { return strings[i]; }
+        });
+        jList1.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        jScrollPane1.setViewportView(jList1);
+
+        javax.swing.GroupLayout settingsPanelLayout = new javax.swing.GroupLayout(settingsPanel);
+        settingsPanel.setLayout(settingsPanelLayout);
+        settingsPanelLayout.setHorizontalGroup(
+            settingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(settingsPanelLayout.createSequentialGroup()
+                .addGroup(settingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(settingsPanelLayout.createSequentialGroup()
+                        .addGap(18, 18, 18)
+                        .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 76, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(mapWidthTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(mapHeightTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, settingsPanelLayout.createSequentialGroup()
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(settingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jLabel3, javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jLabel4, javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(trainButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(settingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(iterationsTextField, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 105, Short.MAX_VALUE)
+                            .addComponent(LRTextField, javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(scaleTextField)
+                            .addComponent(jScrollPane1))))
+                .addContainerGap())
+        );
+        settingsPanelLayout.setVerticalGroup(
+            settingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(settingsPanelLayout.createSequentialGroup()
+                .addGroup(settingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(mapHeightTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(mapWidthTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel1))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(settingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel2)
+                    .addComponent(LRTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(settingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel3)
+                    .addComponent(iterationsTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(settingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel4)
+                    .addComponent(scaleTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(settingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane1)
+                    .addGroup(settingsPanelLayout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(trainButton)))
+                .addContainerGap())
+        );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(591, Short.MAX_VALUE)
+                .addComponent(settingsPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 300, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(settingsPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(145, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void formComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_formComponentShown
-        Graphics g = getGraphics();
-        g.drawImage(map, 0, 0, this);
-    }//GEN-LAST:event_formComponentShown
 
-    private void formMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_formMousePressed
-        Graphics g = getGraphics();
-        g.drawImage(map, 0, 0, this);
-    }//GEN-LAST:event_formMousePressed
+    /**
+     * проверка полей ввода на наличие ошибок
+     * @return true - есть ошибки, false - нет
+     */
+    private boolean checkInput(){
+        //флаг ошибок
+        boolean hasErrors = false;
+        
+        //обычный цвет полей ввода 
+        Color defaultColor = new Color(255,255,255);
+        
+        //цвет ошибки
+        Color errorColor = Color.red;
+        
+        //#width nodes
+        try{            
+            int width = Integer.valueOf(mapWidthTextField.getText());
+            mapWidthTextField.setBackground(defaultColor);
+        }catch(NumberFormatException e){
+            mapWidthTextField.setBackground(errorColor);
+            hasErrors = true;
+        }
+        
+        //#height nodes
+        try{            
+            int height = Integer.valueOf(mapHeightTextField.getText());
+            mapHeightTextField.setBackground(defaultColor);
+        }catch(NumberFormatException e){
+            mapHeightTextField.setBackground(errorColor);
+            hasErrors = true;
+        }
+        
+        //learning rate
+        try{            
+            double learningRate = Double.valueOf(LRTextField.getText());
+            LRTextField.setBackground(defaultColor);
+        }catch(NumberFormatException e){
+            LRTextField.setBackground(errorColor);
+            hasErrors = true;
+        }
+        
+        //#iterations
+        try{            
+            int iterations = Integer.valueOf(iterationsTextField.getText());
+            iterationsTextField.setBackground(defaultColor);
+        }catch(NumberFormatException e){
+            iterationsTextField.setBackground(errorColor);
+            hasErrors = true;
+        }
+        
+        //scale
+        try{            
+            int scale = Integer.valueOf(scaleTextField.getText());
+            scaleTextField.setBackground(defaultColor);
+        }catch(NumberFormatException e){
+            scaleTextField.setBackground(errorColor);
+            hasErrors = true;
+        }
+        
+        return hasErrors;
+    }
+    
+    private void trainButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_trainButtonActionPerformed
+        //проверка ввода на ошибки
+        boolean inputHasErrors = checkInput();
+        
+        //если ввод без ошибок
+        if(!inputHasErrors){
+            
+            //создать карту
+            SOMMap map = initKohonenMap();
+            
+            //train
+            map.train();
+        }
+        else{
+            JOptionPane.showMessageDialog(this, "Ошибка чтения параметров.");        
+        }
+    }//GEN-LAST:event_trainButtonActionPerformed
 
+    /**
+     * проверка правильности ввода при изменении 
+     * @param evt 
+     */
+    private void inputChanged(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_inputChanged
+        checkInput();
+    }//GEN-LAST:event_inputChanged
+
+    /**
+     * инициализация карты
+     * @return 
+     */
+    private SOMMap initKohonenMap(){
+        //ширина (шт. элементов)
+        int width = Integer.valueOf(mapWidthTextField.getText());
+        
+        //высота (шт. элементов)
+        int height = Integer.valueOf(mapHeightTextField.getText());
+        
+        //длина входного вектора
+        int vectorLength = 3;
+        
+        //начальная скорость обучения
+        double startLearningRate = Double.valueOf(LRTextField.getText());
+        
+        //количество итераций
+        int iterationLimit = Integer.valueOf(iterationsTextField.getText());
+                
+        //Kohonen map
+        SOMMap map = new SOMMap(width, height, vectorLength, startLearningRate, iterationLimit);
+        
+        //train set
+        map.addTrainVector(new Integer[] {255,0,0});//r
+        map.addTrainVector(new Integer[] {0,128,0});//g
+        map.addTrainVector(new Integer[] {0,0,255});//b
+//        map.addTrainVector(new Integer[] {0,100,0});//dg
+//        map.addTrainVector(new Integer[] {0,0,139});//db
+//        map.addTrainVector(new Integer[] {255,255,0});//y
+//        map.addTrainVector(new Integer[] {255,165,0});//o
+//        map.addTrainVector(new Integer[] {128,0,128});//p
+//        
+//        map.addTrainVector(new Integer[] {255,255,255});//p
+//        map.addTrainVector(new Integer[] {0,0,0});//p
+
+        //draw Frame
+        map.setDrawFrame(this);
+        
+        //drawScale
+        int drawScale = Integer.valueOf(scaleTextField.getText());
+        map.setDrawScale(drawScale);
+
+        return map;
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JTextField LRTextField;
+    private javax.swing.JTextField iterationsTextField;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JList<String> jList1;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTextField mapHeightTextField;
+    private javax.swing.JTextField mapWidthTextField;
+    private javax.swing.JTextField scaleTextField;
+    private javax.swing.JPanel settingsPanel;
+    private javax.swing.JButton trainButton;
     // End of variables declaration//GEN-END:variables
 
 }

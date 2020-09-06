@@ -79,4 +79,8 @@ public class CSOMNode {
     public Double[] getWeights(){
         return weights;
     }
+    
+    public void draw(int scale){
+        
+    }
 }
