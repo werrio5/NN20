@@ -6,6 +6,7 @@
 package com.mycompany.kohonen;
 
 import java.awt.Color;
+import java.util.Map;
 import javax.swing.JOptionPane;
 
 /**
@@ -13,6 +14,8 @@ import javax.swing.JOptionPane;
  * @author pavel
  */
 public class DrawFrame extends javax.swing.JFrame {
+    
+    private SOMMap map;
     
     /**
      * Creates new form DrawFrame
@@ -41,8 +44,9 @@ public class DrawFrame extends javax.swing.JFrame {
         jLabel4 = new javax.swing.JLabel();
         scaleTextField = new javax.swing.JTextField();
         trainButton = new javax.swing.JButton();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        jList1 = new javax.swing.JList<>();
+        InputVectorTextField = new javax.swing.JTextField();
+        SearchButton = new javax.swing.JButton();
+        loadButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -113,13 +117,21 @@ public class DrawFrame extends javax.swing.JFrame {
             }
         });
 
-        jList1.setModel(new javax.swing.AbstractListModel<String>() {
-            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
-            public int getSize() { return strings.length; }
-            public String getElementAt(int i) { return strings[i]; }
+        InputVectorTextField.setText("255,255,255");
+
+        SearchButton.setText("Search");
+        SearchButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                SearchButtonActionPerformed(evt);
+            }
         });
-        jList1.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
-        jScrollPane1.setViewportView(jList1);
+
+        loadButton.setText("Load");
+        loadButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                loadButtonActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout settingsPanelLayout = new javax.swing.GroupLayout(settingsPanel);
         settingsPanel.setLayout(settingsPanelLayout);
@@ -129,24 +141,33 @@ public class DrawFrame extends javax.swing.JFrame {
                 .addGroup(settingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(settingsPanelLayout.createSequentialGroup()
                         .addGap(18, 18, 18)
-                        .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 76, Short.MAX_VALUE)
+                        .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 75, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(mapWidthTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(mapHeightTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, settingsPanelLayout.createSequentialGroup()
                         .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGroup(settingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(settingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel2)
                             .addComponent(jLabel3, javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jLabel4, javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(trainButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addComponent(jLabel4, javax.swing.GroupLayout.Alignment.TRAILING))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(settingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(iterationsTextField, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 105, Short.MAX_VALUE)
                             .addComponent(LRTextField, javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(scaleTextField)
-                            .addComponent(jScrollPane1))))
+                            .addComponent(scaleTextField)))
+                    .addGroup(settingsPanelLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addGroup(settingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(settingsPanelLayout.createSequentialGroup()
+                                .addComponent(trainButton, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(loadButton))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, settingsPanelLayout.createSequentialGroup()
+                                .addComponent(SearchButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(InputVectorTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE)))))
                 .addContainerGap())
         );
         settingsPanelLayout.setVerticalGroup(
@@ -168,13 +189,15 @@ public class DrawFrame extends javax.swing.JFrame {
                 .addGroup(settingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel4)
                     .addComponent(scaleTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(settingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1)
-                    .addGroup(settingsPanelLayout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(trainButton)))
-                .addContainerGap())
+                .addGap(18, 18, 18)
+                .addGroup(settingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(trainButton)
+                    .addComponent(loadButton))
+                .addGap(18, 18, 18)
+                .addGroup(settingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(InputVectorTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(SearchButton))
+                .addContainerGap(92, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -182,7 +205,7 @@ public class DrawFrame extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(591, Short.MAX_VALUE)
+                .addContainerGap(592, Short.MAX_VALUE)
                 .addComponent(settingsPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
@@ -191,7 +214,7 @@ public class DrawFrame extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(settingsPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(145, Short.MAX_VALUE))
+                .addContainerGap(124, Short.MAX_VALUE))
         );
 
         pack();
@@ -268,7 +291,7 @@ public class DrawFrame extends javax.swing.JFrame {
         if(!inputHasErrors){
             
             //создать карту
-            SOMMap map = initKohonenMap();
+            map = initKohonenMap();
             
             //train
             map.train();
@@ -285,6 +308,40 @@ public class DrawFrame extends javax.swing.JFrame {
     private void inputChanged(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_inputChanged
         checkInput();
     }//GEN-LAST:event_inputChanged
+
+    private void SearchButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SearchButtonActionPerformed
+        //входной вектор
+        String inputVectorString = InputVectorTextField.getText();
+        
+        //разделение запятыми
+        String[] vectorParts = inputVectorString.split(",");
+        
+        // (0..1, 0..1, 0..1)
+        Double[] inputVector = new Double[] {Integer.valueOf(vectorParts[0]) / 255d, Integer.valueOf(vectorParts[1]) / 255d, Integer.valueOf(vectorParts[2]) / 255d};
+        
+        map.findVector(inputVector);
+    }//GEN-LAST:event_SearchButtonActionPerformed
+
+    private void loadButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loadButtonActionPerformed
+        //загрузка данных     
+        Map<Integer[],String> data = DataLoader.loadData();
+        
+        //проверка ввода на ошибки
+        boolean inputHasErrors = checkInput();
+        
+        //если ввод без ошибок
+        if(!inputHasErrors){
+            
+            //создать карту
+            map = initKohonenMap();
+            
+            //train
+            map.train(data);
+        }
+        else{
+            JOptionPane.showMessageDialog(this, "Ошибка чтения параметров.");        
+        }
+    }//GEN-LAST:event_loadButtonActionPerformed
 
     /**
      * инициализация карты
@@ -310,14 +367,14 @@ public class DrawFrame extends javax.swing.JFrame {
         SOMMap map = new SOMMap(width, height, vectorLength, startLearningRate, iterationLimit);
         
         //train set
-        map.addTrainVector(new Integer[] {255,0,0});//r
-        map.addTrainVector(new Integer[] {0,128,0});//g
-        map.addTrainVector(new Integer[] {0,0,255});//b
-//        map.addTrainVector(new Integer[] {0,100,0});//dg
-//        map.addTrainVector(new Integer[] {0,0,139});//db
-//        map.addTrainVector(new Integer[] {255,255,0});//y
-//        map.addTrainVector(new Integer[] {255,165,0});//o
-//        map.addTrainVector(new Integer[] {128,0,128});//p
+        map.addTrainVector(new Integer[] {255,0,0}, "red");//r
+        map.addTrainVector(new Integer[] {0,128,0}, "green");//g
+        map.addTrainVector(new Integer[] {0,0,255}, "blue");//b
+        map.addTrainVector(new Integer[] {0,100,0}, "dark green");//dg
+        map.addTrainVector(new Integer[] {0,0,139}, "dark blue");//db
+        map.addTrainVector(new Integer[] {255,255,0}, "yellow");//y
+        map.addTrainVector(new Integer[] {255,165,0}, "orange");//o
+        map.addTrainVector(new Integer[] {128,0,128}, "purple");//p
 //        
 //        map.addTrainVector(new Integer[] {255,255,255});//p
 //        map.addTrainVector(new Integer[] {0,0,0});//p
@@ -331,16 +388,19 @@ public class DrawFrame extends javax.swing.JFrame {
 
         return map;
     }
+    
+    
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JTextField InputVectorTextField;
     private javax.swing.JTextField LRTextField;
+    private javax.swing.JButton SearchButton;
     private javax.swing.JTextField iterationsTextField;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
-    private javax.swing.JList<String> jList1;
-    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JButton loadButton;
     private javax.swing.JTextField mapHeightTextField;
     private javax.swing.JTextField mapWidthTextField;
     private javax.swing.JTextField scaleTextField;
