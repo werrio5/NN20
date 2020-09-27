@@ -293,6 +293,19 @@ public class DrawFrame extends javax.swing.JFrame {
             //создать карту
             map = initKohonenMap();
             
+            //train set
+            map.addTrainVector(new Integer[] {255,0,0}, "red");//r
+            map.addTrainVector(new Integer[] {0,128,0}, "green");//g
+            map.addTrainVector(new Integer[] {0,0,255}, "blue");//b
+            map.addTrainVector(new Integer[] {0,100,0}, "dark green");//dg
+            map.addTrainVector(new Integer[] {0,0,139}, "dark blue");//db
+            map.addTrainVector(new Integer[] {255,255,0}, "yellow");//y
+            map.addTrainVector(new Integer[] {255,165,0}, "orange");//o
+            map.addTrainVector(new Integer[] {128,0,128}, "purple");//p
+//        
+//          map.addTrainVector(new Integer[] {255,255,255});//p
+//          map.addTrainVector(new Integer[] {0,0,0});//p
+            
             //train
             map.train();
         }
@@ -335,8 +348,13 @@ public class DrawFrame extends javax.swing.JFrame {
             //создать карту
             map = initKohonenMap();
             
+            //train set
+            for(Integer[] vector:data.keySet()){
+                map.addTrainVector(vector, data.get(vector));
+            }
+            
             //train
-            map.train(data);
+            map.train();
         }
         else{
             JOptionPane.showMessageDialog(this, "Ошибка чтения параметров.");        
@@ -366,19 +384,6 @@ public class DrawFrame extends javax.swing.JFrame {
         //Kohonen map
         SOMMap map = new SOMMap(width, height, vectorLength, startLearningRate, iterationLimit);
         
-        //train set
-        map.addTrainVector(new Integer[] {255,0,0}, "red");//r
-        map.addTrainVector(new Integer[] {0,128,0}, "green");//g
-        map.addTrainVector(new Integer[] {0,0,255}, "blue");//b
-        map.addTrainVector(new Integer[] {0,100,0}, "dark green");//dg
-        map.addTrainVector(new Integer[] {0,0,139}, "dark blue");//db
-        map.addTrainVector(new Integer[] {255,255,0}, "yellow");//y
-        map.addTrainVector(new Integer[] {255,165,0}, "orange");//o
-        map.addTrainVector(new Integer[] {128,0,128}, "purple");//p
-//        
-//        map.addTrainVector(new Integer[] {255,255,255});//p
-//        map.addTrainVector(new Integer[] {0,0,0});//p
-
         //draw Frame
         map.setDrawFrame(this);
         

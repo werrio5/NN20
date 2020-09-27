@@ -187,31 +187,6 @@ public class SOMMap {
         return randomVector;
     }
 
-    public void train(Map<Integer[], String> data) {
-        for (int i = 0; i < iterationLimit; i++) {
-            //случайный вектор из обучающего набора
-            Double[] inputVector = getRandomTrainingVector(data);
-
-            //отрисовка некоторых изображений            
-            if (iteration < 100 & iteration % 10 == 0
-                    | //до 100 шаг 10
-                    iteration < 1000 & iteration % 100 == 0
-                    | //до 1000 шаг 100 , далее шаг 500 
-                    iteration % 500 == 0) {
-
-                System.out.println("iteration = " + iteration + " / " + iterationLimit);
-                drawMap();
-                drawLabels(data);
-            }
-            //следующая итерация
-            iterate(inputVector);
-        }
-
-        //финальное изображение
-        drawMap();
-        drawLabels(data);
-    }
-
     /**
      * обучение
      */
@@ -312,14 +287,22 @@ public class SOMMap {
 
     private void drawLabels() {
         if (trainingSet != null) {
-            for (Double[] trainVector : trainingSet) {
-                //центр кластера
-                CSOMNode BMU = getBMU(trainVector);
-                Point pos = BMU.getPosition();
-
-                //метка
-                String title = labels.get(trainVector);
-                drawTitle(title, pos);
+            
+            //метки
+            Set<String> labelsSet = new HashSet<>(labels.values());
+            
+            for(String label: labelsSet){
+                for (Double[] trainVector : trainingSet) {
+                    if(labels.get(trainVector).equals(label)){
+                        //центр кластера
+                        CSOMNode BMU = getBMU(trainVector);
+                        Point pos = BMU.getPosition();
+                        
+                        //метка
+                        drawTitle(label, pos);
+                        break;
+                    }
+                }
             }
         }
     }
@@ -349,6 +332,9 @@ public class SOMMap {
 
         //отрисовка карты
         drawMap();
+        
+        //метки
+        drawLabels();
 
         //отрисовка входного вектора
         drawPoint(pos);
