@@ -11,10 +11,10 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FilenameFilter;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -24,7 +24,32 @@ import java.util.logging.Logger;
  */
 public class DataLoader {
 
-    public static Map<Integer[],String> loadData() {
+    private static Map<Integer[],String> trainData;
+    private static Map<Integer[],String> testData;
+
+    public static Map<Integer[],String> getTrainData(){
+
+        //если не загруженны - загрузить
+        if(trainData == null){
+            loadData();
+        }
+
+        return trainData;
+    }
+
+    public static Map<Integer[],String> getTestData(){
+        return testData;
+    }
+    
+    public static Set<String> getTestNames(){
+        Set<String> names = new HashSet<>(trainData.values());
+        return names;
+    }
+
+    /**
+     * данные масштабируются от 0..63 до 0..255
+     */
+    private static void loadData() {
         //путь к данным
         String curDir = System.getProperty("user.dir");
         String datapath = curDir + File.separator + "data";
@@ -38,9 +63,11 @@ public class DataLoader {
             }
         });
         
-        Map<Integer[],String> data = new HashMap<>();
-
         //data
+        trainData = new HashMap<>();
+        testData = new HashMap<>();
+
+        
         //перебор папок
         for (File directory : directories) {
             //файлы
@@ -48,6 +75,8 @@ public class DataLoader {
             if(files == null) continue;
 
             //перебор файлов
+            //все файлы, кроме последнего в train
+            //последний в test
             for (File file : files) {
                 //файл
                 try {
@@ -61,13 +90,17 @@ public class DataLoader {
                             Integer[] digits = new Integer[digitsStrings.length];
 
                             //str to int
+                            // 4 -> scale 63 to 255
                             for (int i = 0; i < digits.length; i++) {
-                                digits[i] = Integer.valueOf(digitsStrings[i]);
+                                digits[i] = 4 * Integer.valueOf(digitsStrings[i]);
                             }
                             
                             //запись
-                            data.put(digits,directory.getName());
-
+                            if(file.equals(files[files.length - 1]))
+                                testData.put(digits,directory.getName());
+                            else 
+                                trainData.put(digits,directory.getName());
+                            
                             //следующая строка
                             line = br.readLine();
                         }
@@ -79,6 +112,5 @@ public class DataLoader {
                 }
             }
         }
-        return data;
     }
 }

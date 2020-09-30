@@ -6,7 +6,9 @@
 package com.mycompany.kohonen;
 
 import java.awt.Color;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import javax.swing.JOptionPane;
 
 /**
@@ -47,6 +49,8 @@ public class DrawFrame extends javax.swing.JFrame {
         InputVectorTextField = new javax.swing.JTextField();
         SearchButton = new javax.swing.JButton();
         loadButton = new javax.swing.JButton();
+        inputTestDataButton = new javax.swing.JButton();
+        testDataComboBox = new javax.swing.JComboBox<>();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -133,6 +137,15 @@ public class DrawFrame extends javax.swing.JFrame {
             }
         });
 
+        inputTestDataButton.setText("test");
+        inputTestDataButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                inputTestDataButtonActionPerformed(evt);
+            }
+        });
+
+        testDataComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+
         javax.swing.GroupLayout settingsPanelLayout = new javax.swing.GroupLayout(settingsPanel);
         settingsPanel.setLayout(settingsPanelLayout);
         settingsPanelLayout.setHorizontalGroup(
@@ -162,12 +175,18 @@ public class DrawFrame extends javax.swing.JFrame {
                         .addGroup(settingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(settingsPanelLayout.createSequentialGroup()
                                 .addComponent(trainButton, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(loadButton))
+                                .addGap(0, 0, Short.MAX_VALUE))
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, settingsPanelLayout.createSequentialGroup()
-                                .addComponent(SearchButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGroup(settingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(loadButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(SearchButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(InputVectorTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                                .addComponent(InputVectorTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                    .addGroup(settingsPanelLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(inputTestDataButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(testDataComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
         settingsPanelLayout.setVerticalGroup(
@@ -190,14 +209,17 @@ public class DrawFrame extends javax.swing.JFrame {
                     .addComponent(jLabel4)
                     .addComponent(scaleTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addGroup(settingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(trainButton)
-                    .addComponent(loadButton))
+                .addComponent(trainButton)
                 .addGap(18, 18, 18)
                 .addGroup(settingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(InputVectorTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(SearchButton))
-                .addContainerGap(92, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addComponent(loadButton)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 8, Short.MAX_VALUE)
+                .addGroup(settingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(inputTestDataButton)
+                    .addComponent(testDataComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -337,7 +359,14 @@ public class DrawFrame extends javax.swing.JFrame {
 
     private void loadButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loadButtonActionPerformed
         //загрузка данных     
-        Map<Integer[],String> data = DataLoader.loadData();
+        Map<Integer[],String> trainData = DataLoader.getTrainData();
+        
+        //Список тестовых данных
+        testDataComboBox.removeAllItems();
+        Set<String> testNames = DataLoader.getTestNames();
+        for(String name:testNames){
+            testDataComboBox.addItem(name);            
+        }
         
         //проверка ввода на ошибки
         boolean inputHasErrors = checkInput();
@@ -349,8 +378,8 @@ public class DrawFrame extends javax.swing.JFrame {
             map = initKohonenMap();
             
             //train set
-            for(Integer[] vector:data.keySet()){
-                map.addTrainVector(vector, data.get(vector));
+            for(Integer[] vector:trainData.keySet()){
+                map.addTrainVector(vector, trainData.get(vector));
             }
             
             //train
@@ -360,6 +389,26 @@ public class DrawFrame extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(this, "Ошибка чтения параметров.");        
         }
     }//GEN-LAST:event_loadButtonActionPerformed
+
+    private void inputTestDataButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_inputTestDataButtonActionPerformed
+        // test data
+        Map<Integer[],String> testData = DataLoader.getTestData();
+        
+        //оставить только выбранные
+        String filter = (String) testDataComboBox.getSelectedItem();
+        
+        //filtered data
+        Map<Integer[],String> filteredData = new HashMap<>();
+        
+        for(Integer[] key:testData.keySet()){
+            if(testData.get(key).equals(filter)){
+                filteredData.put(key, filter);
+            }
+        }
+        
+        //input testdata
+        map.inputTestData(filteredData.keySet());
+    }//GEN-LAST:event_inputTestDataButtonActionPerformed
 
     /**
      * инициализация карты
@@ -400,6 +449,7 @@ public class DrawFrame extends javax.swing.JFrame {
     private javax.swing.JTextField InputVectorTextField;
     private javax.swing.JTextField LRTextField;
     private javax.swing.JButton SearchButton;
+    private javax.swing.JButton inputTestDataButton;
     private javax.swing.JTextField iterationsTextField;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
@@ -410,6 +460,7 @@ public class DrawFrame extends javax.swing.JFrame {
     private javax.swing.JTextField mapWidthTextField;
     private javax.swing.JTextField scaleTextField;
     private javax.swing.JPanel settingsPanel;
+    private javax.swing.JComboBox<String> testDataComboBox;
     private javax.swing.JButton trainButton;
     // End of variables declaration//GEN-END:variables
 

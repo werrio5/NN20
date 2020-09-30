@@ -12,6 +12,7 @@ import java.awt.Image;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -24,10 +25,11 @@ import java.util.Set;
  * @author werrio5
  */
 public class SOMMap {
-
+    
     private final List<CSOMNode> nodes;
     private final Set<Double[]> trainingSet;
     private final Map<Double[], String> labels;
+    private final Map<String, Point> labelsPointsMap;
 
     //начальные параметры    
     private final double startLearningRate;
@@ -47,7 +49,7 @@ public class SOMMap {
     Frame drawFrame;
     //drawScale
     int drawScale;
-
+    
     public SOMMap(int width, int height, int vectorLength, double startLearningRate, int iterationLimit) {
         //начальные параметры       
         //ширина и высота
@@ -84,6 +86,7 @@ public class SOMMap {
 
         //метки (подписи на карте)
         labels = new HashMap<>();
+        labelsPointsMap = new HashMap<>();
     }
 
     /**
@@ -136,12 +139,12 @@ public class SOMMap {
             }
         }
     }
-
+    
     private void calcIterationParameters() {
         calcLearningRate();
         calcBMURadius();
     }
-
+    
     private void iterate(Double[] inputVector) {
         //параметры для итерации
         calcIterationParameters();
@@ -158,7 +161,7 @@ public class SOMMap {
         //номер следующей итерации
         iteration++;
     }
-
+    
     public void addTrainVector(Integer[] vector, String title) {
         Double[] dVector = new Double[vector.length];
         for (int i = 0; i < vector.length; i++) {
@@ -167,7 +170,7 @@ public class SOMMap {
         trainingSet.add(dVector);
         labels.put(dVector, title);
     }
-
+    
     private Double[] getRandomTrainingVector(Map<Integer[], String> data) {
         //random index
         int index = (int) Math.round(Math.random() * (data.size() - 1));
@@ -177,7 +180,7 @@ public class SOMMap {
         Double[] randomVector = {intRandomVector[0] / 63d, intRandomVector[1] / 63d, intRandomVector[2] / 63d};
         return randomVector;
     }
-
+    
     private Double[] getRandomTrainingVector() {
         //random index
         int index = (int) Math.round(Math.random() * (trainingSet.size() - 1));
@@ -191,7 +194,7 @@ public class SOMMap {
      * обучение
      */
     public void train() {
-
+        
         for (int i = 0; i < iterationLimit; i++) {
             //случайный вектор из обучающего набора
             Double[] inputVector = getRandomTrainingVector();
@@ -202,10 +205,10 @@ public class SOMMap {
                     iteration < 1000 & iteration % 100 == 0
                     | //до 1000 шаг 100, далее шаг 500 
                     iteration % 500 == 0) {
-
+                
                 drawMap();
                 //метки
-                drawLabels();
+                //drawLabels();
             }
             //следующая итерация
             iterate(inputVector);
@@ -216,11 +219,11 @@ public class SOMMap {
         //метки
         drawLabels();
     }
-
+    
     public List<CSOMNode> getNodes() {
         return nodes;
     }
-
+    
     public Image weightsToImage(int scale) {
         //image
         BufferedImage im = new BufferedImage(width * scale, height * scale, BufferedImage.TYPE_INT_RGB);
@@ -243,11 +246,11 @@ public class SOMMap {
         }
         return im;
     }
-
+    
     public void setDrawFrame(Frame drawFrame) {
         this.drawFrame = drawFrame;
     }
-
+    
     public void setDrawScale(int drawScale) {
         this.drawScale = drawScale;
     }
@@ -261,61 +264,80 @@ public class SOMMap {
         g.clearRect(0, 0, drawFrame.getWidth() - 250, drawFrame.getHeight());
         g.drawImage(im, 20, 50, drawFrame);
     }
-
-    private void drawLabels(Map<Integer[], String> data) {
-        Set<String> labels = new HashSet<String>(data.values());
-        for (String value : labels) {
-            //первый вектор с этим значением
-            Double[] vector = new Double[3];
-            for (Integer[] key : data.keySet()) {
-                if (data.get(key) == value) {
-                    vector[0] = key[0] / 63d;
-                    vector[1] = key[1] / 63d;
-                    vector[2] = key[2] / 63d;
-                    break;
-                }
-            }
-            //участок кластера
-            CSOMNode BMU = getBMU(vector);
-            Point pos = BMU.getPosition();
-
-            //метка
-            drawTitle(value, pos);
-        }
-
-    }
-
+    
     private void drawLabels() {
         if (trainingSet != null) {
-            
-            //метки
-            Set<String> labelsSet = new HashSet<>(labels.values());
-            
-            for(String label: labelsSet){
-                for (Double[] trainVector : trainingSet) {
-                    if(labels.get(trainVector).equals(label)){
-                        //центр кластера
-                        CSOMNode BMU = getBMU(trainVector);
-                        Point pos = BMU.getPosition();
-                        
-                        //метка
-                        drawTitle(label, pos);
-                        break;
+
+            //get pos
+            if (labelsPointsMap.isEmpty()) {
+                //метки
+                Set<String> labelsSet = new HashSet<>(labels.values());
+                
+                for (String label : labelsSet) {
+
+                    //самая часто встречающаяся точка
+                    Map<Point, Integer> pointsMap = new HashMap<>();
+                    
+                    for (Double[] trainVector : trainingSet) {
+                        if (labels.get(trainVector).equals(label)) {
+
+                            //местонахождение
+                            CSOMNode BMU = getBMU(trainVector);
+                            Point pos = BMU.getPosition();
+
+                            //+1
+                            if (pointsMap.containsKey(pos)) {
+                                int i = pointsMap.get(pos);
+                                pointsMap.put(pos, i + 1);
+                            } else {
+                                pointsMap.put(pos, 0);
+                            }
+                            
+                        }
                     }
+
+                    //поиск самой часто встречающейся точки
+                    int max = -1;
+                    Point maxPoint = null;
+                    for (Point p : pointsMap.keySet()) {
+                        if (pointsMap.get(p) > max) {
+                            max = pointsMap.get(p);
+                            maxPoint = p;
+                        }
+                    }
+
+                    //метка
+                    if (maxPoint != null) {
+                        labelsPointsMap.put(label, maxPoint);
+                        drawTitle(label, maxPoint);                        
+                    }
+                    
+                }
+            } else {
+                for (String label : labelsPointsMap.keySet()) {
+                    drawTitle(label, labelsPointsMap.get(label));                    
                 }
             }
+            
         }
     }
-
+    
     private void drawTitle(String title, Point pos) {
         Graphics g = drawFrame.getGraphics();
         g.setColor(Color.BLACK);
         g.drawString(title, pos.x * drawScale + 20, pos.y * drawScale + 50);
     }
-
+    
     private void drawPoint(Point pos) {
         Graphics g = drawFrame.getGraphics();
         g.setColor(Color.BLACK);
+        g.drawRect(pos.x * drawScale + 20, pos.y * drawScale + 50, drawScale, drawScale);
+        System.out.println(pos);
+    }
+    
+    private void drawPoint(Point pos, Color c) {
+        Graphics g = drawFrame.getGraphics();
+        g.setColor(c);
         g.drawRect(pos.x * drawScale + 20, pos.y * drawScale + 50, drawScale, drawScale);
         System.out.println(pos);
     }
@@ -332,11 +354,55 @@ public class SOMMap {
 
         //отрисовка карты
         drawMap();
-        
+
         //метки
         drawLabels();
 
         //отрисовка входного вектора
         drawPoint(pos);
+    }
+    
+    public void inputTestData(Collection<Integer[]> input) {
+        //отрисовка карты
+        drawMap();
+
+        //самая часто встречающаяся точка
+        Map<Point, Integer> pointsMap = new HashMap<>();
+        
+        for (Integer[] vector : input) {
+            Double[] dvector = {(double) vector[0] / 255d, (double) vector[1] / 255d, (double) vector[2] / 255d};
+
+            //местонахождение
+            CSOMNode BMU = getBMU(dvector);
+            Point pos = BMU.getPosition();
+
+            //+1
+            if (pointsMap.containsKey(pos)) {
+                int i = pointsMap.get(pos);
+                pointsMap.put(pos, i + 1);
+            } else {
+                pointsMap.put(pos, 0);
+            }
+            
+        }
+
+        //поиск самой часто встречающейся точки
+        int max = -1;
+        for (Point p : pointsMap.keySet()) {
+            if (pointsMap.get(p) > max) {
+                max = pointsMap.get(p);
+            }
+        }
+
+        //отскалировать цвета рамок от белого до черного по частоте
+        double scale = 255d / (double) max;
+        for (Point p : pointsMap.keySet()) {
+            int i = pointsMap.get(p);
+            Color c = new Color((int) (i * scale), (int) (i * scale), (int) (i * scale));
+            drawPoint(p, c);
+        }
+
+        //метки
+        drawLabels();
     }
 }
