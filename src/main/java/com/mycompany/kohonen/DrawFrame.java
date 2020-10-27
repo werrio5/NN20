@@ -18,6 +18,7 @@ import javax.swing.JOptionPane;
 public class DrawFrame extends javax.swing.JFrame {
     
     private SOMMap map;
+    private LVQ lvq;
     
     /**
      * Creates new form DrawFrame
@@ -51,6 +52,9 @@ public class DrawFrame extends javax.swing.JFrame {
         loadButton = new javax.swing.JButton();
         inputTestDataButton = new javax.swing.JButton();
         testDataComboBox = new javax.swing.JComboBox<>();
+        LVQTrainButton = new javax.swing.JButton();
+        LVQTestButton = new javax.swing.JButton();
+        LVQTestDataComboBox = new javax.swing.JComboBox<>();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -130,7 +134,7 @@ public class DrawFrame extends javax.swing.JFrame {
             }
         });
 
-        loadButton.setText("Load");
+        loadButton.setText("Train (dataset)");
         loadButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 loadButtonActionPerformed(evt);
@@ -146,6 +150,22 @@ public class DrawFrame extends javax.swing.JFrame {
 
         testDataComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
+        LVQTrainButton.setText("LVQ train");
+        LVQTrainButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                LVQTrainButtonActionPerformed(evt);
+            }
+        });
+
+        LVQTestButton.setText("test");
+        LVQTestButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                LVQTestButtonActionPerformed(evt);
+            }
+        });
+
+        LVQTestDataComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+
         javax.swing.GroupLayout settingsPanelLayout = new javax.swing.GroupLayout(settingsPanel);
         settingsPanel.setLayout(settingsPanelLayout);
         settingsPanelLayout.setHorizontalGroup(
@@ -154,7 +174,7 @@ public class DrawFrame extends javax.swing.JFrame {
                 .addGroup(settingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(settingsPanelLayout.createSequentialGroup()
                         .addGap(18, 18, 18)
-                        .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 75, Short.MAX_VALUE)
+                        .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(mapWidthTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -162,32 +182,39 @@ public class DrawFrame extends javax.swing.JFrame {
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, settingsPanelLayout.createSequentialGroup()
                         .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGroup(settingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel2)
-                            .addComponent(jLabel3, javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jLabel4, javax.swing.GroupLayout.Alignment.TRAILING))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(settingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(iterationsTextField, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 105, Short.MAX_VALUE)
-                            .addComponent(LRTextField, javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(scaleTextField)))
-                    .addGroup(settingsPanelLayout.createSequentialGroup()
-                        .addContainerGap()
-                        .addGroup(settingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(settingsPanelLayout.createSequentialGroup()
-                                .addComponent(trainButton, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(0, 0, Short.MAX_VALUE))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, settingsPanelLayout.createSequentialGroup()
+                                .addGroup(settingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel2)
+                                    .addComponent(jLabel3, javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(jLabel4, javax.swing.GroupLayout.Alignment.TRAILING))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addGroup(settingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(iterationsTextField, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 105, Short.MAX_VALUE)
+                                    .addComponent(LRTextField, javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(scaleTextField)))
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, settingsPanelLayout.createSequentialGroup()
                                 .addGroup(settingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addComponent(loadButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(SearchButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(InputVectorTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                    .addGroup(settingsPanelLayout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(inputTestDataButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(testDataComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                    .addComponent(trainButton, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(SearchButton, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(InputVectorTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, settingsPanelLayout.createSequentialGroup()
+                                .addGroup(settingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(LVQTrainButton)
+                                    .addGroup(settingsPanelLayout.createSequentialGroup()
+                                        .addComponent(inputTestDataButton, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(testDataComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addGroup(settingsPanelLayout.createSequentialGroup()
+                                        .addComponent(LVQTestButton)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(LVQTestDataComboBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                                .addGap(6, 6, 6)))))
                 .addContainerGap())
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, settingsPanelLayout.createSequentialGroup()
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addComponent(loadButton)
+                .addGap(80, 80, 80))
         );
         settingsPanelLayout.setVerticalGroup(
             settingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -208,18 +235,24 @@ public class DrawFrame extends javax.swing.JFrame {
                 .addGroup(settingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel4)
                     .addComponent(scaleTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
+                .addGap(24, 24, 24)
                 .addComponent(trainButton)
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(settingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(InputVectorTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(SearchButton))
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(loadButton)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 8, Short.MAX_VALUE)
+                .addGap(12, 12, 12)
                 .addGroup(settingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(inputTestDataButton)
-                    .addComponent(testDataComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addComponent(testDataComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(31, 31, 31)
+                .addComponent(LVQTrainButton)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(settingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(LVQTestButton)
+                    .addComponent(LVQTestDataComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -227,8 +260,8 @@ public class DrawFrame extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(592, Short.MAX_VALUE)
-                .addComponent(settingsPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(593, Short.MAX_VALUE)
+                .addComponent(settingsPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 211, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -236,7 +269,7 @@ public class DrawFrame extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(settingsPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(124, Short.MAX_VALUE))
+                .addContainerGap(23, Short.MAX_VALUE))
         );
 
         pack();
@@ -410,6 +443,61 @@ public class DrawFrame extends javax.swing.JFrame {
         map.inputTestData(filteredData.keySet());
     }//GEN-LAST:event_inputTestDataButtonActionPerformed
 
+    private void LVQTrainButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_LVQTrainButtonActionPerformed
+        //загрузка данных     
+        Map<Integer[],String> trainData = DataLoader.getTrainData();
+        
+        //Список тестовых данных
+        LVQTestDataComboBox.removeAllItems();
+        Set<String> testNames = DataLoader.getTestNames();
+        for(String name:testNames){
+            LVQTestDataComboBox.addItem(name);            
+        }
+        
+        //проверка ввода на ошибки
+        boolean inputHasErrors = checkInput();
+        
+        //если ввод без ошибок
+        if(!inputHasErrors){
+            
+            int numClasses = testNames.size();
+            //создать карту
+            lvq = initLVQ(numClasses);
+            
+            //train set
+            for(Integer[] vector:trainData.keySet()){
+                lvq.addTrainVector(vector, trainData.get(vector));
+            }
+            
+            //train
+            lvq.train();
+        }
+        else{
+            JOptionPane.showMessageDialog(this, "Ошибка чтения параметров.");        
+        }
+    }//GEN-LAST:event_LVQTrainButtonActionPerformed
+
+    private void LVQTestButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_LVQTestButtonActionPerformed
+        // test data
+        Map<Integer[],String> testData = DataLoader.getTestData();
+        
+        //оставить только выбранные
+        String filter = (String) testDataComboBox.getSelectedItem();
+        
+        //filtered data
+        Map<Integer[],String> filteredData = new HashMap<>();
+        
+        for(Integer[] key:testData.keySet()){
+            if(testData.get(key).equals(filter)){
+                filteredData.put(key, filter);
+            }
+        }
+        
+        //input testdata
+        lvq.inputTestData(filteredData.keySet(),filter);
+        
+    }//GEN-LAST:event_LVQTestButtonActionPerformed
+
     /**
      * инициализация карты
      * @return 
@@ -443,11 +531,29 @@ public class DrawFrame extends javax.swing.JFrame {
         return map;
     }
     
+    public LVQ initLVQ(int numClasses){
+        //длина входного вектора
+        int vectorLength = 3;
+        
+        //начальная скорость обучения
+        double startLearningRate = Double.valueOf(LRTextField.getText());
+        
+        //количество итераций
+        int iterationLimit = Integer.valueOf(iterationsTextField.getText());
+        
+        LVQ newLVQ = new LVQ(vectorLength, numClasses, startLearningRate, iterationLimit);
+        
+        return newLVQ;
+    }
+    
     
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextField InputVectorTextField;
     private javax.swing.JTextField LRTextField;
+    private javax.swing.JButton LVQTestButton;
+    private javax.swing.JComboBox<String> LVQTestDataComboBox;
+    private javax.swing.JButton LVQTrainButton;
     private javax.swing.JButton SearchButton;
     private javax.swing.JButton inputTestDataButton;
     private javax.swing.JTextField iterationsTextField;
