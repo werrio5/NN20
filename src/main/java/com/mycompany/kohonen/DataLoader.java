@@ -26,6 +26,8 @@ public class DataLoader {
 
     private static Map<Integer[],String> trainData;
     private static Map<Integer[],String> testData;
+    private static int classCount;
+    private static File[] directories;
 
     public static Map<Integer[],String> getTrainData(){
 
@@ -56,7 +58,7 @@ public class DataLoader {
         File folder = new File(datapath);
 
         //список папок
-        File[] directories = folder.listFiles(new FilenameFilter() {
+        directories = folder.listFiles(new FilenameFilter() {
             @Override
             public boolean accept(File current, String name) {
                 return new File(current, name).isDirectory();
@@ -66,6 +68,7 @@ public class DataLoader {
         //data
         trainData = new HashMap<>();
         testData = new HashMap<>();
+        classCount = directories.length;
 
         
         //перебор папок
@@ -112,5 +115,69 @@ public class DataLoader {
                 }
             }
         }
+        
+        filterData(directories);
+    }
+    
+    private static void filterData(File[] directories){
+        //all data
+        Map<Integer[],String> fullData = new HashMap<>();
+        fullData.putAll(trainData);
+        
+        boolean[][][] valuesRegistered = new boolean[64][64][64];
+        //unique lines
+        Set<Integer[]> lineSet = new HashSet<>();
+        for(Integer[] line:fullData.keySet()){
+            
+            if(!valuesRegistered[line[0]/4][line[1]/4][line[2]/4]){
+                lineSet.add(line);
+                valuesRegistered[line[0]/4][line[1]/4][line[2]/4] = true;
+            }
+        }
+        
+        Map<Integer[],String> filteredTrainData = new HashMap<>();
+        //define class
+        for(Integer[] line: lineSet){
+            filteredTrainData.put(line, fullData.get(line));
+        }
+        
+        trainData = filteredTrainData;
+        
+        Map<Integer[],String> fullTestData = new HashMap<>();
+        fullTestData.putAll(testData);
+        
+        boolean[][][] testValuesRegistered = new boolean[64][64][64];
+        //unique lines
+        Set<Integer[]> testLineSet = new HashSet<>();
+        for(Integer[] line:fullTestData.keySet()){
+            
+            if(!testValuesRegistered[line[0]/4][line[1]/4][line[2]/4]){
+                testLineSet.add(line);
+                testValuesRegistered[line[0]/4][line[1]/4][line[2]/4] = true;
+            }
+        }
+        
+        Map<Integer[],String> filteredTestData = new HashMap<>();
+        //define class
+        for(Integer[] line: testLineSet){
+            filteredTestData.put(line, fullTestData.get(line));
+        }
+        
+        testData = filteredTestData;
+    }
+    
+    public static double[][] initWeights(){
+        double[][] weights = new double[3][classCount];
+        for(int i=0;i<directories.length;i++){
+            for(Integer[] line:trainData.keySet()){
+                if(trainData.get(line).equals(directories[i].getName())){
+                    weights[0][i]=line[0];
+                    weights[1][i]=line[1];
+                    weights[2][i]=line[2];
+                    break;
+                }
+            }
+        }
+        return weights;
     }
 }

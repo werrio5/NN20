@@ -54,11 +54,15 @@ public class LVQ {
         for (int i = 0; i < numClasses; i++) {
             outputLayer.add(new LVQNode());
         }
+        
+        //init weights with first 3 values
+        double[][] weights = DataLoader.initWeights();
+        
 
         //input layer
         inputLayer = new LinkedList<>();
         for (int i = 0; i < vectorLength; i++) {
-            inputLayer.add(new LVQNode(outputLayer.size()));
+            inputLayer.add(new LVQNode(outputLayer.size(),weights[i]));
         }
 
     }
@@ -122,6 +126,7 @@ public class LVQ {
         //best matching unit
         LVQNode BMU = getBMU(inputVector);
         int BMUIndex = outputLayer.indexOf(BMU);
+        System.out.println("bmu = "+BMUIndex);
 
         //изменить веса
         adjustWeights(BMUIndex, inputVector);
@@ -183,6 +188,13 @@ public class LVQ {
             System.out.println("iteration = " + iteration);
         }
         attachLabels();
+        System.out.println("=============");
+        for(int i=0;i<inputLayer.size();i++){
+            for(double w:inputLayer.get(i).getWeigths()){
+                System.out.println(w);
+            }
+            System.out.println("===========");
+        }
         //
         System.out.println("=============");
         for(int i=0;i<outputLayer.size();i++){
@@ -194,7 +206,7 @@ public class LVQ {
 
     public void inputTestData(Collection<Integer[]> input, String fname){
         
-        Integer[] results = new Integer[outputLayer.size()];
+        int[] results = new int[outputLayer.size()];
         int sum = 0;
         
         for(Integer[] vector:input){
@@ -207,16 +219,39 @@ public class LVQ {
             sum++;
         }
         
-        int maxIndex = 0;
-        int max = -1;
+        int[] maxIndex = new int[3];
+        int[] max = new int[3];
+        
         for(int i=0;i<results.length;i++){
-            if(results[i]>max){
-                max = results[i];
-                maxIndex = i;
+            if(results[i]>max[0]){
+                max[2] = max[1];
+                maxIndex[2] = maxIndex[1];
+                max[1] = max[0];
+                maxIndex[1] = maxIndex[0];
+                max[0] = results[i];
+                maxIndex[0] = i;
             }
+            else{
+                if(results[i]<max[0] & results[i]>max[1]){
+                    max[2] = max[1];
+                    maxIndex[2] = maxIndex[1];
+                    max[1] = results[i];
+                    maxIndex[1] = i;
+                }
+                else{
+                    if(results[i]<max[1] & results[i]>max[2]){
+                        max[2] = results[i];
+                        maxIndex[2] = i;
+                    }
+                }                
+            }            
         }
         
-        String description = outputLayer.get(maxIndex).getDescription();
-        System.out.println(input.size()+" из файла "+fname+" распознаны как "+description);
+        
+        System.out.println(input.size()+" from file "+fname+" identified as:");
+        for(int i=0;i<3;i++){
+           String description = outputLayer.get(maxIndex[i]).getDescription(); 
+            System.out.println(description+" "+(double)max[i]/(double)sum);
+        }
     }
 }

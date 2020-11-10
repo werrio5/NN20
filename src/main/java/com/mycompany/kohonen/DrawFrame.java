@@ -482,7 +482,7 @@ public class DrawFrame extends javax.swing.JFrame {
         Map<Integer[],String> testData = DataLoader.getTestData();
         
         //оставить только выбранные
-        String filter = (String) testDataComboBox.getSelectedItem();
+        String filter = (String) LVQTestDataComboBox.getSelectedItem();
         
         //filtered data
         Map<Integer[],String> filteredData = new HashMap<>();
